@@ -1,0 +1,2 @@
+# Setting to Allow Automatic Checking for Plugin Updates
+check-for-updates: true

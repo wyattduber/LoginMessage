@@ -18,7 +18,8 @@ public class CommandHandler implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         if (args.length == 0) {
             String helpList =
-                    "§";
+                    "§f[§aLogin§bMessage§f] §aList of Commands\n" +
+                    "§f - §a/lm reload§f - §aReloads the Plugin and it's Config Files\n";
         }
 
         if (sender instanceof Player) {

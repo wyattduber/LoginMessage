@@ -1,0 +1,26 @@
+name: LoginMessage
+version: 1.0.0
+author: Wcash
+main: com.Wcash.LoginMessage
+api-version: 1.16
+website: https://www.github.com/DoubleYouCash/LoginMessage
+
+commands:
+  lm:
+    description: Main LoginMessage Command
+    usage: /lm (command) [arg1] [arg2]...
+    permission: lm.command
+    permission-message: §f[§aLogin§bMessage§f]§c You don't have permission to use this command!
+
+permissions:
+  lm.*:
+    description: Gives access to all LoginMessage Commands and Permission Nodes
+    children:
+      lm.command.reload: true
+      lm.command.help: true
+  lm.command.help:
+    description: Allows access to the command list
+    default: op
+  lm.command.reload:
+    description: Allows to reload the plugin and config files
+    default: op
