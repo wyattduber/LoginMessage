@@ -31,3 +31,10 @@ A few other things to note here:
 2. The `first-time-message` section has an enable boolean and is disabled by default.
 3. __**If the first time message is enabled, none of the other messages will show on first join regardless of permission nodes**__.
 4. The messages will run in the order that they are put in the config, so if you want one message to always run before others, it must be at the top of the list in the config.
+
+# Custom Placeholders
+There are a few custom placeholders currently supported:
+- `%PLAYER%` - Replaces with the player's display name
+- `%ONLINE%` - Shows the amount of players online
+- `%MAXPLAYERS%` - Shows the max amount of players
+- Any placeholders from PlaceholderAPI 
