@@ -17,10 +17,12 @@ import java.util.logging.Level;
 public class LoginMessage extends JavaPlugin {
 
     public boolean checkForUpdates;
+    public boolean useFirstTimeMessage;
     public FileConfiguration config;
     public File customConfigFile;
     public String[] versions;
     public String[] messageNames;
+    public String firstTimeMessage;
     public HashMap<String, String> messages = new HashMap<>();
 
     private LoginListener ll;
@@ -63,21 +65,50 @@ public class LoginMessage extends JavaPlugin {
         /* Un-Register Listeners */
         PlayerJoinEvent.getHandlerList().unregister(ll);
 
-        /* Parse the Config */
+        /* Reload the Config */
+        try {
+            reloadCustomConfig();
+            config = getCustomConfig();
+            saveCustomConfig();
+        } catch (Exception e) {
+            error("Error setting up the config! Contact the developer if you cannot fix this issue");
+        }
+
+        /* Parse the Reloaded Config */
         parseConfig();
 
         /* Check for Updates */
         setCheckForUpdates();
     }
 
-    public boolean parseConfig() {
+    public void parseConfig() {
 
         /* Get Boolean to Check for Updates */
         try {
             checkForUpdates = getConfigBool("check-for-updates");
         } catch (NullPointerException e) {
             error("Cannot Find \"check-for-update\" Boolean in Config! Make sure it's there and reload the plugin.");
-            return false;
+            return;
+        }
+
+        try {
+            StringBuilder message = new StringBuilder();
+            useFirstTimeMessage = getConfigBool("enable-first-time-message");
+            String[] tempAdd = new String[config.getStringList("first-time-message").size()];
+            tempAdd = config.getStringList("first-time-message").toArray(tempAdd);
+            for (int i = 0; i < tempAdd.length; i++) {
+                tempAdd[i] = tempAdd[i].replaceAll("&", "§");
+                if (i == 0) {
+                    message.append(tempAdd[i]);
+                } else {
+                    message.append("\n").append(tempAdd[i]);
+                }
+            }
+            firstTimeMessage = message.toString();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            error("Cannot Find \"enable-first-time-message\" Boolean in Config! Make sure it's there and reload the plugin.");
+            return;
         }
 
         /* Parse Message Names and Messages by Permission Node */
@@ -104,10 +135,8 @@ public class LoginMessage extends JavaPlugin {
         } catch (NullPointerException e) {
             e.printStackTrace();
             error("Error with the Message Section in the Config! Make sure it's set properly and reload the plugin.");
-            return false;
         }
 
-        return true;
     }
 
     public void setCheckForUpdates() {

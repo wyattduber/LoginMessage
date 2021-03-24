@@ -30,11 +30,20 @@ public class LoginListener implements Listener {
             lm.log("Version " + versions[0] + " available! You have " + versions[1] + ".");
         }
 
+        if (lm.useFirstTimeMessage && !event.getPlayer().hasPlayedBefore()) {
+            String message = lm.firstTimeMessage;
+            message = message.replaceAll("%PLAYER%", event.getPlayer().getDisplayName());
+            message = message.replaceAll("%ONLINE%", Integer.toString(lm.getServer().getOnlinePlayers().size()));
+            message = message.replaceAll("%MAXPLAYERS%",  Integer.toString(lm.getServer().getMaxPlayers()));
+            event.getPlayer().sendMessage(message);
+            return;
+        }
+
         /* Sends the Messages to Players who have the Permission node to receive them */
         for (String messageName : messageNames) {
             if (event.getPlayer().hasPermission("lm.message." + messageName)) {
                 String message = messages.get("lm.message." + messageName);
-                message = message.replaceAll("%USER%", event.getPlayer().getDisplayName());
+                message = message.replaceAll("%PLAYER%", event.getPlayer().getDisplayName());
                 message = message.replaceAll("%ONLINE%", Integer.toString(lm.getServer().getOnlinePlayers().size()));
                 message = message.replaceAll("%MAXPLAYERS%",  Integer.toString(lm.getServer().getMaxPlayers()));
 

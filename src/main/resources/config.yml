@@ -1,10 +1,10 @@
-# Setting to Allow Automatic Checking for Plugin Updates
 check-for-updates: true
-
 messages:
   - playerMOTD
   - staffMOTD
-
+enable-first-time-message: false
+first-time-message:
+  - "&d&lWelcome to the Server, &a%PLAYER%&d!"
 playerMOTD:
   - "&5============================="
   - "&f - &6Remember to Be Respectful to All Players."
