@@ -1,10 +1,7 @@
 package com.Wcash;
 
-import com.Wcash.commands.CommandHandler;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,15 +10,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.logging.Level;
 
-public class LoginMessage extends JavaPlugin implements Listener {
+public class LoginMessage extends JavaPlugin {
 
     public boolean checkForUpdates;
     public FileConfiguration config;
     public File customConfigFile;
     public String[] versions;
+    public String[] messageNames;
+    public HashMap<String, String> messages = new HashMap<>();
+
+    private LoginListener ll;
 
     public static LoginMessage getPlugin() { return getPlugin(LoginMessage.class); }
 
@@ -38,14 +40,10 @@ public class LoginMessage extends JavaPlugin implements Listener {
         }
 
         /* Parse Config for Messages / Booleans */
-        if (parseConfig()) {
-
-        }
+        parseConfig();
 
         /* Register Join Listener for Updates */
-        if (checkForUpdates) {
-            setCheckForUpdates();
-        }
+        setCheckForUpdates();
 
         /* Register Commands */
         try {
@@ -58,23 +56,18 @@ public class LoginMessage extends JavaPlugin implements Listener {
 
     @Override
     public void onDisable() {
-
+        log("Plugin Disabled Successfully!");
     }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        /* Check for Updates and send message to player with permission to see updates */
-        if (checkForUpdates && (event.getPlayer().hasPermission("mcdb.update") || event.getPlayer().isOp())) {
-            event.getPlayer().sendMessage("§f[§aLogin§bMessage§f] Version §c" + versions[0] + " §favailable! You have §c" + versions[1] + ".");
-            log("Version " + versions[0] + " available! You have " + versions[1] + ".");
-        }
-    }
-
 
     public void reload() {
-        /* Un-Register Listeners
+        /* Un-Register Listeners */
+        PlayerJoinEvent.getHandlerList().unregister(ll);
 
+        /* Parse the Config */
         parseConfig();
+
+        /* Check for Updates */
+        setCheckForUpdates();
     }
 
     public boolean parseConfig() {
@@ -83,10 +76,36 @@ public class LoginMessage extends JavaPlugin implements Listener {
         try {
             checkForUpdates = getConfigBool("check-for-updates");
         } catch (NullPointerException e) {
-            error("Cannot Find \"check-for-update\" Boolean in Config!");
+            error("Cannot Find \"check-for-update\" Boolean in Config! Make sure it's there and reload the plugin.");
+            return false;
         }
 
-        //TODO Implement a Function to interpret the different MOTD's and then assign them a permission node
+        /* Parse Message Names and Messages by Permission Node */
+        try {
+            messageNames = new String[config.getStringList("messages").size()]; // Initialize the Array as an Template
+            messageNames = config.getStringList("messages").toArray(messageNames); // Fill the array using itself as a template
+
+            for (String messageName : messageNames) {
+                StringBuilder message = new StringBuilder();
+                String[] tempAdd = new String[config.getStringList(messageName).size()];
+                tempAdd = config.getStringList(messageName).toArray(tempAdd);
+                for (int i = 0; i < tempAdd.length; i++) {
+                    tempAdd[i] = tempAdd[i].replaceAll("&", "§");
+                    if (i == 0) {
+                        message.append(tempAdd[i]);
+                    } else {
+                        message.append("\n").append(tempAdd[i]);
+                    }
+
+                }
+                messages.put("lm.message." + messageName, message.toString());
+            }
+
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            error("Error with the Message Section in the Config! Make sure it's set properly and reload the plugin.");
+            return false;
+        }
 
         return true;
     }
@@ -98,8 +117,9 @@ public class LoginMessage extends JavaPlugin implements Listener {
                     versions[0] = version;
                     versions[1] = this.getDescription().getVersion();
                 }
-                getServer().getPluginManager().registerEvents(this, this);
             });
+            ll = new LoginListener(versions);
+            getServer().getPluginManager().registerEvents(ll, this);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -24,3 +24,6 @@ permissions:
   lm.command.reload:
     description: Allows to reload the plugin and config files
     default: op
+  lm.update:
+    description: Allows a player to be notified if there is an update for the plugin
+    default: op
