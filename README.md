@@ -30,3 +30,4 @@ A few other things to note here:
 1. The `check-for-updates` boolean is simply to let the plugin automatically check for updates.
 2. The `first-time-message` section has an enable boolean and is disabled by default.
 3. __**If the first time message is enabled, none of the other messages will show on first join regardless of permission nodes**__.
+4. The messages will run in the order that they are put in the config, so if you want one message to always run before others, it must be at the top of the list in the config.
