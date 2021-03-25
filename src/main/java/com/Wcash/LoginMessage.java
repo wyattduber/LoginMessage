@@ -20,7 +20,7 @@ public class LoginMessage extends JavaPlugin {
     public boolean useFirstTimeMessage;
     public FileConfiguration config;
     public File customConfigFile;
-    public String[] versions;
+    public String[] versions = new String[2];
     public String[] messageNames;
     public String firstTimeMessage;
     public HashMap<String, String> messages = new HashMap<>();
@@ -141,7 +141,7 @@ public class LoginMessage extends JavaPlugin {
 
     public void setCheckForUpdates() {
         try {
-            new UpdateChecker(this, 00000).getVersion(version -> {
+            new UpdateChecker(this, 90530).getVersion(version -> {
                 if (!this.getDescription().getVersion().equalsIgnoreCase(version)) {
                     versions[0] = version;
                     versions[1] = this.getDescription().getVersion();
