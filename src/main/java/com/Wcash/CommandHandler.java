@@ -29,7 +29,7 @@ public class CommandHandler implements CommandExecutor {
             case "reload":
                 lm.reload();
                 if (sender instanceof ConsoleCommandSender) {
-                    sender.sendMessage("Plugin and Configuration Reloaded!");
+                    lm.log("Plugin and Configuration Reloaded!");
                 } else {
                     sender.sendMessage("§f[§aLogin§bMessage§f] Plugin and Configuration Reloaded!");
                 }
@@ -39,7 +39,7 @@ public class CommandHandler implements CommandExecutor {
                 break;
             default:
                 if (sender instanceof ConsoleCommandSender) {
-                    sender.sendMessage("§c" + "Command Not Found!");
+                    lm.log("§c" + "Command Not Found!");
                 } else {
                     sender.sendMessage("§f[§aLogin§bMessage§f]§c Command Not Found!");
                 }

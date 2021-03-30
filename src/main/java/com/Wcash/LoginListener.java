@@ -1,8 +1,10 @@
 package com.Wcash;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 
@@ -30,27 +32,54 @@ public class LoginListener implements Listener {
             lm.log("Version " + versions[0] + " available! You have " + versions[1] + ".");
         }
 
-        if (lm.useFirstTimeMessage && !event.getPlayer().hasPlayedBefore()) {
-            String message = lm.firstTimeMessage;
-            message = message.replaceAll("%PLAYER%", event.getPlayer().getDisplayName());
-            message = message.replaceAll("%ONLINE%", Integer.toString(lm.getServer().getOnlinePlayers().size()));
-            message = message.replaceAll("%MAXPLAYERS%",  Integer.toString(lm.getServer().getMaxPlayers()));
-            event.getPlayer().sendMessage(message);
-            return;
-        }
+        if (lm.messageDelayTicks > 0) {
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    /* Send the custom first message if player is new */
+                    if (lm.useFirstTimeMessage && !event.getPlayer().hasPlayedBefore()) {
+                        sendFirstMessage(event.getPlayer());
+                        return;
+                    }
 
-        /* Sends the Messages to Players who have the Permission node to receive them */
-        for (String messageName : messageNames) {
-            if (event.getPlayer().hasPermission("lm.message." + messageName)) {
-                String message = messages.get("lm.message." + messageName);
-                message = message.replaceAll("%PLAYER%", event.getPlayer().getDisplayName());
-                message = message.replaceAll("%ONLINE%", Integer.toString(lm.getServer().getOnlinePlayers().size()));
-                message = message.replaceAll("%MAXPLAYERS%",  Integer.toString(lm.getServer().getMaxPlayers()));
-
-                event.getPlayer().sendMessage(message);
+                    /* Sends the Messages to Players who have the Permission node to receive them */
+                    sendCustomMessages(event.getPlayer());
+                }
+            }.runTaskLater(lm, lm.messageDelayTicks);
+        } else {
+            /* Send the custom first message if player is new */
+            if (lm.useFirstTimeMessage && !event.getPlayer().hasPlayedBefore()) {
+                sendFirstMessage(event.getPlayer());
+                return;
             }
+
+            /* Sends the Messages to Players who have the Permission node to receive them */
+            sendCustomMessages(event.getPlayer());
         }
 
     }
 
+    private void sendFirstMessage(Player player) {
+        String message = lm.firstTimeMessage;
+        message = message.replaceAll("%PLAYER%", player.getDisplayName());
+        message = message.replaceAll("%ONLINE%", Integer.toString(lm.getServer().getOnlinePlayers().size()));
+        message = message.replaceAll("%MAXPLAYERS%",  Integer.toString(lm.getServer().getMaxPlayers()));
+        player.getPlayer().sendMessage(message);
+    }
+
+    private void sendCustomMessages(Player player) {
+        for (String messageName : messageNames) {
+            if (player.hasPermission("lm.message." + messageName)) {
+                String message = messages.get("lm.message." + messageName);
+                message = message.replaceAll("%PLAYER%", player.getDisplayName());
+                message = message.replaceAll("%ONLINE%", Integer.toString(lm.getServer().getOnlinePlayers().size()));
+                message = message.replaceAll("%MAXPLAYERS%",  Integer.toString(lm.getServer().getMaxPlayers()));
+
+                player.sendMessage(message);
+            }
+        }
+    }
+
 }
+
+

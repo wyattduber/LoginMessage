@@ -18,6 +18,7 @@ public class LoginMessage extends JavaPlugin {
 
     public boolean checkForUpdates;
     public boolean useFirstTimeMessage;
+    public int messageDelayTicks;
     public FileConfiguration config;
     public File customConfigFile;
     public String[] versions = new String[2];
@@ -92,6 +93,13 @@ public class LoginMessage extends JavaPlugin {
         }
 
         try {
+            messageDelayTicks = getConfigInt("message-delay");
+        } catch (NullPointerException e) {
+            error("Cannot Find \"message-delay\" Boolean in Config! Make sure it's there and reload the plugin.");
+            return;
+        }
+
+        try {
             StringBuilder message = new StringBuilder();
             useFirstTimeMessage = getConfigBool("enable-first-time-message");
             String[] tempAdd = new String[config.getStringList("first-time-message").size()];
@@ -135,8 +143,9 @@ public class LoginMessage extends JavaPlugin {
         } catch (NullPointerException e) {
             e.printStackTrace();
             error("Error with the Message Section in the Config! Make sure it's set properly and reload the plugin.");
+            return;
         }
-
+        log("Config Successfully Loaded");
     }
 
     public void setCheckForUpdates() {
@@ -151,7 +160,9 @@ public class LoginMessage extends JavaPlugin {
             getServer().getPluginManager().registerEvents(ll, this);
         } catch (Exception e) {
             e.printStackTrace();
+            return;
         }
+        log("Update Checker Successfully Loaded");
     }
 
     public String getConfigString(String entryName) {
@@ -160,6 +171,10 @@ public class LoginMessage extends JavaPlugin {
 
     public boolean getConfigBool(String entryName) {
         return config.getBoolean(entryName);
+    }
+
+    public int getConfigInt(String entryName) {
+        return config.getInt(entryName);
     }
 
     public void reloadCustomConfig() {

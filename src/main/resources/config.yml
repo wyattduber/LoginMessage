@@ -1,5 +1,8 @@
 check-for-updates: true
+message-delay: 0
 messages:
+  - "example"
 enable-first-time-message: false
 first-time-message:
   - "&d&lWelcome to the Server, &a%PLAYER%&d!"
+
