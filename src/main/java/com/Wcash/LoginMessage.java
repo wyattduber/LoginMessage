@@ -52,7 +52,7 @@ public class LoginMessage extends JavaPlugin {
         try {
             Objects.requireNonNull(this.getCommand("lm")).setExecutor(new CommandHandler());
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            error(e.getMessage());
         }
 
     }
@@ -114,7 +114,7 @@ public class LoginMessage extends JavaPlugin {
             }
             firstTimeMessage = message.toString();
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            error(e.getMessage());
             error("Cannot Find \"enable-first-time-message\" Boolean in Config! Make sure it's there and reload the plugin.");
             return;
         }
@@ -141,7 +141,7 @@ public class LoginMessage extends JavaPlugin {
             }
 
         } catch (NullPointerException e) {
-            e.printStackTrace();
+            error(e.getMessage());
             error("Error with the Message Section in the Config! Make sure it's set properly and reload the plugin.");
             return;
         }
@@ -159,7 +159,7 @@ public class LoginMessage extends JavaPlugin {
             ll = new LoginListener(versions);
             getServer().getPluginManager().registerEvents(ll, this);
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e.getMessage());
             return;
         }
         log("Update Checker Successfully Loaded");
@@ -187,7 +187,7 @@ public class LoginMessage extends JavaPlugin {
         try {
             defConfigStream = new InputStreamReader(Objects.requireNonNull(this.getResource("config.yml")), StandardCharsets.UTF_8);
         } catch (Exception e) {
-            e.printStackTrace();
+            error(e.getMessage());
         }
         if (defConfigStream != null) {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);

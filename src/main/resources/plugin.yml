@@ -1,8 +1,8 @@
 name: LoginMessage
-version: 1.0.3
+version: 1.0.4
 author: Wcash
 main: com.Wcash.LoginMessage
-api-version: 1.16
+api-version: 1.20
 website: https://www.github.com/DoubleYouCash/LoginMessage
 
 commands:

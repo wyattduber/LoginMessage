@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class LoginListener implements Listener {
 
@@ -64,7 +65,7 @@ public class LoginListener implements Listener {
         message = message.replaceAll("%PLAYER%", player.getDisplayName());
         message = message.replaceAll("%ONLINE%", Integer.toString(lm.getServer().getOnlinePlayers().size()));
         message = message.replaceAll("%MAXPLAYERS%",  Integer.toString(lm.getServer().getMaxPlayers()));
-        player.getPlayer().sendMessage(message);
+        Objects.requireNonNull(player.getPlayer()).sendMessage(message);
     }
 
     private void sendCustomMessages(Player player) {
